@@ -54,7 +54,7 @@ gulp.task('test', function(done) {
 
 
 gulp.task('watch', function() {
-  gulp.watch([paths.es6, paths.templates], ['webpack', 'webpack-production']);
+  gulp.watch([paths.es6, paths.templates], gulp.series('webpack', 'webpack-production'));
 });
 
-gulp.task('default', ['webpack', 'webpack-production']);
+gulp.task('default', gulp.series('webpack', 'webpack-production'));
