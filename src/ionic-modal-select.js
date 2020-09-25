@@ -12,6 +12,17 @@
  */
 
 angular.module('ionic-modal-select', [])
+.provider('modalSelect', function () {
+	this.setTemplateMultipleUrl = function (url) {
+        this.modalTemplateMultipleUrl = url;
+    };
+    this.setTemplateUrl = function (url) {
+        this.modalTemplateUrl = url;
+    };
+    this.$get = function () {
+        return this;
+    };
+})
 .directive('compile', compile)
 .directive('modalSelect', modalSelect);
 
@@ -44,7 +55,7 @@ function compile($compile) {
 }
 
 
-function modalSelect($ionicModal, $timeout, $filter, $parse, $templateCache ) {
+function modalSelect($ionicModal, modalSelect, $timeout, $filter, $parse, $templateCache ) {
 
 		const modalTemplateMultiple = require('raw!./modal-template-multiple.html');
 		const modalTemplate = require('raw!./modal-template.html');
@@ -318,6 +329,14 @@ function modalSelect($ionicModal, $timeout, $filter, $parse, $templateCache ) {
 						$templateCache.get(iAttrs.searchTemplate),
 						{ scope: scope }
 					);
+				} else if (multiple ? modalSelect.modalTemplateMultipleUrl : modalSelect.modalTemplateUrl)
+				{
+					$ionicModal.fromTemplateUrl(
+						multiple ? modalSelect.modalTemplateMultipleUrl : modalSelect.modalTemplateUrl,
+						{ scope: scope }
+					).then((modal) => {
+						scope.modal = modal;
+					});
 				} else {
 					modalTpl = multiple ? modalTemplateMultiple : modalTemplate;
 					scope.modal = $ionicModal.fromTemplate(
